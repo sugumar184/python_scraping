@@ -2,11 +2,6 @@
 import requests
 from bs4 import BeautifulSoup
 
-
-login_url= 'login_url'
-main_url = 'main_url'
-
-
 with requests.Session() as s:
     cont = s.get(login_url)
     soup = BeautifulSoup(cont.text,'html.parser')
@@ -14,27 +9,25 @@ with requests.Session() as s:
     user_ip = soup.find('input',attrs={'name':'UserLogin[ip]'}).get('value')
     
     payload = {
-        'UserLogin[office_mail]': 'mail_id',
-        'UserLogin[password]': 'password',
+        'UserLogin[office_mail]': 'sugumar.n@optisolbusiness.com',
+        'UserLogin[password]': 'Sugu@123',
         'YII_CSRF_TOKEN': token,
         'UserLogin[ip]': user_ip,
         'yt0': 'Login'
     }
     
-    
-    
-    
-    
-    
-    
     p = s.post(login_url,headers=headers,data=payload)
     print('p_status:: ',p.status_code)
-    # print the html returned or something more intelligent to see if it's a successful login page.
-    #print (p.text)
-    main_cont = s.get(status_url,headers=headers,cookies=cookies)
-    print('main_status:: ',main_cont.status_code)
-    with open('p_cont.html','w') as f:
-        f.write(main_cont.text)
-    # An authorised request.
-#     r = s.get(status_url)
-#     print (r.text)
+    try:
+        while True:
+            main_cont = s.get(status_url,headers=headers,cookies=cookies)
+            print('main_status:: ',main_cont.status_code)
+            sp = BeautifulSoup(main_cont.text,'html.parser')
+            b = sp.select('div.col-md-12.dailystatus span.col-md-4')
+            print(b[0].get_text())
+            print(b[1].get_text())
+            print(b[2].get_text())
+            time.sleep(30)
+    except KeyboardInterrupt:
+            print('interrupted!')
+       
